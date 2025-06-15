@@ -1,36 +1,18 @@
-// import OpenAI from "openai";
-
-// const openai = new OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY!,
-// });
-
-// export async function generateScript(celebrity: string): Promise<string> {
-//   const prompt = `Write a short, engaging video script (2-3 lines) about the sports celebrity ${celebrity}.`;
-
-//   try {
-//     const response = await openai.chat.completions.create({
-//       model: "gpt-3.5-turbo",
-//       messages: [{ role: "user", content: prompt }],
-//       temperature: 0.7,
-//     });
-
-//     const script = response.choices[0].message.content;
-//     return script || "";
-//   } catch (error) {
-//     console.error("🔥 OpenAI error:", error); // 👈 log the real error
-//     return "Error generating script";
-//   }
-// }
-
+// lib/ai.ts
 import { GoogleGenAI } from "@google/genai";
 
 const genAI = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY!,
 });
 
-export async function generateScript(celebrity: string): Promise<string> {
+export async function generateScript(): Promise<{
+  celebrity: string;
+  script: string;
+}> {
   const prompt = `
-Write a compelling voiceover script for a short Instagram reel (15–30 seconds) about the sports celebrity ${celebrity}.
+Pick a random famous sports celebrity from any sport (like cricket, football, tennis, athletics, etc).
+
+Now write a compelling voiceover script for a short Instagram reel (15–30 seconds) about that person.
 
 Requirements:
 - Tone: Engaging and emotional
@@ -38,7 +20,8 @@ Requirements:
 - Length: Use approximately 60–80 words to match the reel duration
 - Language: Conversational and inspiring
 
-Also include a comment at the top like "// Word count: X".
+Also include the celebrity's name at the top in this format: "Celebrity: [Name]"
+Also include a comment at the top like "// Word count: X"
 `;
 
   try {
@@ -51,18 +34,29 @@ Also include a comment at the top like "// Word count: X".
       },
     });
 
-    let text = (await result.text) || "";
+    const text = (await result.text) || "";
 
-    // ✨ Clean the output
-    text = text
-      .replace(/^\/\/.*\n*/g, "") // Remove the "// Word count..." line
-      .replace(/\(VOICEOVER.*?\)\n*/i, "") // Remove the "(VOICEOVER...)" line
-      .replace(/\n+/g, " ") // Replace multiple newlines with a space
-      .trim(); // Clean leading/trailing whitespace
+    // Extract celebrity name
+    const match = text.match(/Celebrity:\s*(.+)/i);
+    const celebrityName = match?.[1]?.trim() ?? "Unknown Celebrity";
 
-    return text;
+    // Clean the script
+    const cleanedScript = text
+      .replace(/^Celebrity:.*\n*/i, "")
+      .replace(/^\/\/.*\n*/g, "")
+      .replace(/\(VOICEOVER.*?\)\n*/i, "")
+      .replace(/\n+/g, " ")
+      .trim();
+
+    return {
+      celebrity: celebrityName,
+      script: cleanedScript,
+    };
   } catch (error: any) {
     console.error("🔥 Gemini error:", error.message || error);
-    return "Error generating script";
+    return {
+      celebrity: "Unknown",
+      script: "Error generating script",
+    };
   }
 }

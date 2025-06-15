@@ -1,22 +1,16 @@
 import { generateScript } from "@/lib/ai";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const name = searchParams.get("name");
-
-  if (!name) {
-    return NextResponse.json(
-      { error: "Missing celebrity name" },
-      { status: 400 }
-    );
-  }
-
+export async function GET() {
   try {
-    const script = await generateScript(name);
-    return NextResponse.json({ script });
+    const { celebrity, script } = await generateScript();
+
+    return NextResponse.json({
+      celebrity,
+      script,
+    });
   } catch (err) {
-    console.error("Gemini error:", err);
+    console.error("🔥 API error:", err);
     return NextResponse.json(
       { error: "Failed to generate script" },
       { status: 500 }
