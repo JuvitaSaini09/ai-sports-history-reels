@@ -1,38 +1,36 @@
-// api=api/audio/
-import { generateScript } from "@/lib/ai";
+import { createReelVideo } from "@/lib/createReelVideo";
+import { downloadImagesToPublicFolder } from "@/lib/downloadImages";
 import { searchImages } from "@/lib/imageSearch";
 import { generateVoiceFromScript } from "@/lib/murf";
+import { generateScript } from "@/lib/script";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    // 🎯 Step 1: Generate script and celebrity name
     const { celebrity, script } = await generateScript();
-
-    // 🔊 Step 2: Generate voice audio from script
-    // const audioUrl = await generateVoiceFromScript(script);
-
-    // 📷 Step 3: Generate image from script
+    const { audioUrl } = await generateVoiceFromScript(script);
     const images = await searchImages(celebrity);
-    console.log("🖼 Images fetched:", images);
+    const downloadedImages = await downloadImagesToPublicFolder(
+      images,
+      celebrity
+    );
 
-    const finalVideoUrl = await createReelVideo({
-      images, // URLs
-      audioUrl, // from Murf
-      duration: audioLengthInSeconds, // or calculate
+    const filename = `reel-test.mp4`;
+    const localVideoPath = await createReelVideo({
+      images: downloadedImages,
+      audioUrl,
+      outputFileName: filename,
     });
 
-    // 📦 Final response
     return NextResponse.json({
-      // celebrity,
-      // script,
-      // audioUrl,
-      images,
+      celebrity,
+      script,
+      videoUrl: localVideoPath, // e.g. "/reel-test.mp4"
     });
   } catch (error: any) {
-    console.error("🔥 Error generating reel:", error.message || error);
+    console.error("Error:", error);
     return NextResponse.json(
-      { error: "Something went wrong while generating the reel." },
+      { error: "Something went wrong." },
       { status: 500 }
     );
   }
