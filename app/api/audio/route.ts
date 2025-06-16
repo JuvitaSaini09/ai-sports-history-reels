@@ -1,18 +1,6 @@
-// import { generateScript } from "@/lib/ai";
-// import { generateVoiceFromScript } from "@/lib/murf";
-// import { NextResponse } from "next/server";
-
-// export async function GET() {
-//   const celebrity = "Virat Kohli"; // 🔁 You can make this dynamic later
-
-//   const script = await generateScript(celebrity); // 🪄 Generate using Gemini
-//   const audioUrl = await generateVoiceFromScript(script); // 🎙️ Get audio from Murf
-
-//   return NextResponse.json({ celebrity, script, audioUrl }); // 🎯 Serve it all
-// }
-
-// app/api/reel/route.ts
+// api=api/audio/
 import { generateScript } from "@/lib/ai";
+import { searchImages } from "@/lib/imageSearch";
 import { generateVoiceFromScript } from "@/lib/murf";
 import { NextResponse } from "next/server";
 
@@ -22,13 +10,24 @@ export async function GET() {
     const { celebrity, script } = await generateScript();
 
     // 🔊 Step 2: Generate voice audio from script
-    const audioUrl = await generateVoiceFromScript(script);
+    // const audioUrl = await generateVoiceFromScript(script);
+
+    // 📷 Step 3: Generate image from script
+    const images = await searchImages(celebrity);
+    console.log("🖼 Images fetched:", images);
+
+    const finalVideoUrl = await createReelVideo({
+      images, // URLs
+      audioUrl, // from Murf
+      duration: audioLengthInSeconds, // or calculate
+    });
 
     // 📦 Final response
     return NextResponse.json({
-      celebrity,
-      script,
-      audioUrl,
+      // celebrity,
+      // script,
+      // audioUrl,
+      images,
     });
   } catch (error: any) {
     console.error("🔥 Error generating reel:", error.message || error);
