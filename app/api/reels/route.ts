@@ -6,7 +6,6 @@ import { generateVoiceFromScript } from "@/lib/murf";
 import { generateScript } from "@/lib/script";
 import { uploadToS3 } from "@/lib/uploadToS3";
 import { NextResponse } from "next/server";
-import path from "path";
 import fs from "fs";
 import { saveReelToHistory } from "@/lib/saveReelToHistory";
 
@@ -39,16 +38,25 @@ export async function GET() {
       outputFileName: filename,
     });
 
-    const fullPath = path.join(process.cwd(), "public", filename);
+    // const fullPath = path.join(process.cwd(), "public", filename);
 
-    console.log("🎥 Absolute path:", fullPath);
-    console.log("📁 Exists:", fs.existsSync(fullPath));
+    // if (!fs.existsSync(fullPath)) {
+    //   throw new Error("Video not created! Path doesn't exist: " + fullPath);
+    // }
 
-    if (!fs.existsSync(fullPath)) {
-      throw new Error("Video not created! Path doesn't exist: " + fullPath);
+    // const s3Url = await uploadToS3(fullPath);
+
+    // const s3Url = await uploadToS3(`/tmp/${filename}`);
+
+    const tmpOutputPath = `/tmp/${filename}`;
+
+    if (!fs.existsSync(tmpOutputPath)) {
+      throw new Error(
+        "Video not created! Path doesn't exist: " + tmpOutputPath
+      );
     }
 
-    const s3Url = await uploadToS3(fullPath);
+    const s3Url = await uploadToS3(tmpOutputPath);
 
     saveReelToHistory({
       celebrity,

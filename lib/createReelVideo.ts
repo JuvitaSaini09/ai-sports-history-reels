@@ -29,7 +29,8 @@ export async function createReelVideo({
   outputFileName: string;
 }): Promise<string> {
   const publicPath = path.join(process.cwd(), "public");
-  const tempPath = path.join(publicPath, "tmp");
+  // const tempPath = path.join(publicPath, "tmp");
+  const tempPath = path.join("/tmp", "tmp");
 
   if (fs.existsSync(tempPath)) {
     fs.rmSync(tempPath, { recursive: true, force: true });
@@ -79,7 +80,8 @@ export async function createReelVideo({
   const audioPath = path.join(tempPath, "audio.mp3");
   await downloadFile(audioUrl, audioPath);
 
-  const outputPath = path.join(publicPath, outputFileName);
+  // const outputPath = path.join(publicPath, outputFileName);
+  const outputPath = path.join("/tmp", outputFileName);
 
   return new Promise((resolve, reject) => {
     const cmd = ffmpeg();

@@ -15,12 +15,15 @@ export async function downloadImagesToPublicFolder(
   celebrity: string
 ): Promise<string[]> {
   const celebritySlug = slugify(celebrity);
-  const folderPath = path.join(
-    process.cwd(),
-    "public",
-    "reels-tmp",
-    celebritySlug
-  );
+  // const folderPath = path.join(
+  //   process.cwd(),
+  //   "public",
+  //   "reels-tmp",
+  //   celebritySlug
+  // );
+
+  const folderPath = path.join("/tmp", "reels-tmp", celebritySlug);
+
   fs.mkdirSync(folderPath, { recursive: true });
 
   const imagePaths: string[] = [];
