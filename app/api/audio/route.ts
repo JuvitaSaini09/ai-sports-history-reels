@@ -8,12 +8,14 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const { celebrity, script } = await generateScript();
-    const { audioUrl } = await generateVoiceFromScript(script);
+    const audioUrl = await generateVoiceFromScript(script);
     const images = await searchImages(celebrity);
     const downloadedImages = await downloadImagesToPublicFolder(
       images,
       celebrity
     );
+
+    console.log("audioUrl", audioUrl);
 
     const filename = `reel-test.mp4`;
     const localVideoPath = await createReelVideo({
@@ -25,7 +27,8 @@ export async function GET() {
     return NextResponse.json({
       celebrity,
       script,
-      videoUrl: localVideoPath, // e.g. "/reel-test.mp4"
+      videoUrl: localVideoPath,
+      audioUrl,
     });
   } catch (error: any) {
     console.error("Error:", error);

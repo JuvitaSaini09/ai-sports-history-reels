@@ -1,11 +1,3 @@
-// export default function Home() {
-//   return (
-//     <main className="flex justify-center items-center h-screen bg-black text-white">
-//       <h1 className="text-2xl font-bold">AI Sports History Reels 🎥</h1>
-//     </main>
-//   );
-// }
-
 import Reel from "@/components/Reel";
 
 export default function Home() {

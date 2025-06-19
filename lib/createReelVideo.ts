@@ -6,7 +6,7 @@ import axios from "axios";
 import https from "https";
 import sharp from "sharp";
 
-console.log("🎯 ffmpeg path is:", ffmpegPath);
+// console.log("🎯 ffmpeg path is:", ffmpegPath);
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 async function downloadFile(url: string, outputPath: string) {
@@ -70,7 +70,7 @@ export async function createReelVideo({
     }
   }
 
-  console.log("✅ Total valid images used:", imageInputs.length);
+  // console.log("✅ Total valid images used:", imageInputs.length);
 
   if (imageInputs.length === 0) {
     throw new Error("❌ No valid images to create the video.");
