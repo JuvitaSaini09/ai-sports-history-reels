@@ -1,4 +1,9 @@
 import { getJson } from "serpapi";
+type SerpImage = {
+  original?: string;
+  thumbnail?: string;
+  link?: string;
+};
 
 export async function searchImages(query: string): Promise<string[]> {
   const apiKey = process.env.SERPAPI_KEY!;
@@ -17,7 +22,7 @@ export async function searchImages(query: string): Promise<string[]> {
         }
 
         const imageUrls = (json.images_results || [])
-          .map((img: any) => img.original || img.thumbnail || img.link)
+          .map((img: SerpImage) => img.original || img.thumbnail || img.link)
           .filter(Boolean);
 
         resolve(imageUrls.slice(0, 20)); // return top 20 images

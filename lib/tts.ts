@@ -1,4 +1,5 @@
 import { PollyClient, SynthesizeSpeechCommand } from "@aws-sdk/client-polly";
+import { Readable } from "stream"; // Node.js stream type
 
 const polly = new PollyClient({
   region: "us-east-1",
@@ -20,8 +21,7 @@ export async function generateVoiceFromScript(text: string): Promise<Buffer> {
 
   const audioStream = response.AudioStream;
 
-  // ✅ Ensure AudioStream is a Node.js readable stream
-  if (!audioStream || typeof (audioStream as any).pipe !== "function") {
+  if (!audioStream || !(audioStream instanceof Readable)) {
     throw new Error("Invalid audio stream returned from Polly.");
   }
 

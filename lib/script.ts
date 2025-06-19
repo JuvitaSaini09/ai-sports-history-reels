@@ -52,8 +52,9 @@ Also include a comment at the top like "// Word count: X"
       celebrity: celebrityName,
       script: cleanedScript,
     };
-  } catch (error: any) {
-    console.error("🔥 Gemini error:", error.message || error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("🔥 Gemini error:", err.message || err);
     return {
       celebrity: "Unknown",
       script: "Error generating script",

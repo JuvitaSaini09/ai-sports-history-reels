@@ -33,7 +33,7 @@ export async function GET() {
 
     const filename = `reel-${slugify(celebrity)}-${timestamp}.mp4`;
 
-    const localVideoPath = await createReelVideo({
+    await createReelVideo({
       images: downloadedImages,
       audioUrl,
       outputFileName: filename,
@@ -58,8 +58,9 @@ export async function GET() {
     });
 
     return NextResponse.json({ videoUrls: s3Url.urls });
-  } catch (error: any) {
-    console.error("Error generating reel:", error.message);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("Error generating reel:", err.message);
     return NextResponse.json(
       { error: "Something went wrong" },
       { status: 500 }

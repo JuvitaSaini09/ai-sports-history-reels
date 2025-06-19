@@ -45,8 +45,9 @@ export async function uploadToS3(localPath: string): Promise<{
       publicUrl: res.data.publicUrl,
       urls,
     };
-  } catch (err: any) {
-    console.error("❌ Failed to upload video to S3:", err.message);
-    throw err;
+  } catch (err: unknown) {
+    const error = err as Error;
+    console.error("❌ Failed to upload video to S3:", error.message);
+    throw error;
   }
 }
